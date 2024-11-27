@@ -1,59 +1,76 @@
+
+
 from email.message import EmailMessage
 import smtplib
-from  datetime import datetime
+from datetime import datetime
 import os
-
-
+from config import SENHA_EMAIL,REMETENTE,DESTINATARIO
 
 hoje = datetime.now()
 dia_atual = hoje.date()
-formatar = dia_atual.strftime("%Y-%m-%d")
+formatar = dia_atual.strftime("%d")
+dia_da_semana = datetime.now().weekday()
 
+match dia_da_semana:
+    case 0:
+        dia_da_semana = "Segunda-feira"
+    case 1:
+        dia_da_semana = "Terça-feira"
+    case 2:
+        dia_da_semana = "Quarta-feira"
+    case 3:
+        dia_da_semana = "Quinta-feira"
+    case 4:
+        dia_da_semana = "Sexta-feira"
+    case 5:
+        dia_da_semana = "Sábado"
+    case 6:
+        dia_da_semana = "Domingo"
+
+# Configurações do remetente e destinatário
+
+sender = REMETENTE
+senha = SENHA_EMAIL
+recipient = DESTINATARIO[0]
 
 assunto = "Atualização da Dominio"
-sender = "I.james1304@outlook.com"
-recipient = "claudinojames1702@gmail.com"
-senha = os.environ['senha_email']
 
+# Função para enviar o e-mail
+def atualizacaoDisponivel():
 
-
-
-def atualizacaoDisponivel():    
+    mensagem = f"<H1>Atualização disponível! {dia_da_semana} dia <strong>{formatar}</strong> </H1>"
     
-     
-    data_obj = datetime.strptime(formatar, '%Y-%m-%d')
-
-    data_formatada = data_obj.strftime('%d-%m-%Y')
-    
-    message = f"<H1>Atualização disponível! Hoje dia <strong>{data_formatada}</strong> </H1>"
     email = EmailMessage()
     email["From"] = sender
     email["To"] = recipient
-    email["Subject"] = f"{assunto}"
-    email.set_content(message, subtype="html")
-    smtp = smtplib.SMTP("smtp-mail.outlook.com", port=587)
-    smtp.starttls()
-    smtp.login(sender, senha)
-    smtp.sendmail(sender, recipient, email.as_string())
-    smtp.quit()
-    print("ATUALIZAÇÃO DISPONÍVEL email enviado com sucesso")
-    
-    
+    email["Subject"] = assunto
+    email.set_content(mensagem, subtype="html")
+
+    # Configurar o servidor SMTP do Gmail
+    with smtplib.SMTP("smtp.gmail.com", port=587) as smtp:
+        smtp.starttls()  # Iniciar a conexão segura
+        smtp.login(sender, senha)  # Realizar o login
+        smtp.sendmail(sender, recipient, email.as_string())  # Enviar o e-mail
+
+    print("E-mail enviado com sucesso!")
+
+
 
 def atualizacaoVersao():
-    data_obj = datetime.strptime(formatar, '%Y-%m-%d')
-
-    data_formatada = data_obj.strftime('%d-%m-%Y')
-    message = f"<H1>Atualização VERSÃO! Hoje dia <strong>{data_formatada}</strong> </H1>"
+    mensagem = f"<H1>Atualização de <strong> versão Domínio Contabil</strong>! Hoje {dia_da_semana} dia <strong>{formatar}</strong>  </H1>"
     email = EmailMessage()
     email["From"] = sender
     email["To"] = recipient
-    email["Subject"] = f"{assunto}"
-    email.set_content(message, subtype="html")
-    smtp = smtplib.SMTP("smtp-mail.outlook.com", port=587)
-    smtp.starttls()
-    smtp.login(sender, senha)
-    smtp.sendmail(sender, recipient, email.as_string())
-    smtp.quit() 
-    print("ATUALIZAÇÃO DISPONÍVEL email enviado com sucesso")
+    email["Subject"] = assunto
+    email.set_content(mensagem, subtype="html")
+
+    # Configurar o servidor SMTP do Gmail
+    with smtplib.SMTP("smtp.gmail.com", port=587) as smtp:
+        smtp.starttls()  # Iniciar a conexão segura
+        smtp.login(sender, senha)  # Realizar o login
+        smtp.sendmail(sender, recipient, email.as_string())  # Enviar o e-mail
+
+    print("E-mail enviado com sucesso!")
+
+
         
